@@ -75,7 +75,22 @@ function App() {
     if (!currentUser) return alert("You must be logged in to vote!");
     try {
       const res = await axios.put(`${API_URL}/posts/${id}/vote`, { userId: currentUser._id, type: 'down' });
+      if (res.data.deleted) {
+        setPosts(posts.filter(p => p._id !== id));
+      } else {
+        setPosts(posts.map(p => p._id === id ? res.data : p));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleReport = async (id) => {
+    if (!currentUser) return alert("You must be logged in to report!");
+    try {
+      const res = await axios.put(`${API_URL}/posts/${id}/report`, { userId: currentUser._id });
       setPosts(posts.map(p => p._id === id ? res.data : p));
+      alert("Post reported to administrators.");
     } catch (err) {
       console.error(err);
     }
@@ -143,6 +158,7 @@ function App() {
               posts={filteredPosts} 
               onUpvote={handleUpvote} 
               onDownvote={handleDownvote}
+              onReport={handleReport}
               onAddComment={handleAddComment}
               currentUser={currentUser} 
             />

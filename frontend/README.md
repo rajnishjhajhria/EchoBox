@@ -49,10 +49,6 @@ To run the full stack locally, make sure to also run the `backend` server:
    ```
 *(Or use `node server.js` to run statically.)*
 
-You can also seed the database with sample posts by running:
-```bash
-node seed.js
-```
 within the backend directory.
 
 ## Tech Stack

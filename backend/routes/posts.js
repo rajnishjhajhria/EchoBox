@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
+const Notification = require('../models/Notification');
 
 // Get all posts
 router.get('/', async (req, res) => {
@@ -59,7 +60,34 @@ router.put('/:id/vote', async (req, res) => {
       }
     }
 
+    // Auto-Delete Logic
+    if (post.downvotedBy.length >= 100) {
+      await Post.findByIdAndDelete(post._id);
+      await Notification.create({ 
+        message: `System Action: Post "${post.content.substring(0, 30)}..." was automatically taken down for reaching 100 downvotes.` 
+      });
+      return res.json({ deleted: true, _id: post._id });
+    }
+
     await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Report a post
+router.put('/:id/report', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: 'Not found' });
+    
+    if (!post.reportedBy.includes(userId)) {
+      post.reportedBy.push(userId);
+      await post.save();
+    }
+    
     res.json(post);
   } catch (err) {
     res.status(500).json({ error: err.message });

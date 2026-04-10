@@ -10,6 +10,7 @@ const PostSchema = new mongoose.Schema({
   content: { type: String, required: true },
   upvotedBy: [{ type: String }],
   downvotedBy: [{ type: String }],
+  reportedBy: [{ type: String }],
   commentList: [CommentSchema]
 }, { timestamps: true });
 
