@@ -25,6 +25,7 @@ function App() {
 
   useEffect(() => {
     fetchPosts();
+    fetchUsers();
   }, []);
 
   const fetchPosts = async () => {
@@ -36,10 +37,20 @@ function App() {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/auth/users`);
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Failed to fetch users", err);
+    }
+  };
+
   const handleRegister = async (username, password, email) => {
     try {
       const res = await axios.post(`${API_URL}/auth/register`, { username, password, email });
       setCurrentUser(res.data);
+      await fetchUsers();
       navigate('/');
     } catch (err) {
       alert(err.response?.data?.error || "Registration failed");

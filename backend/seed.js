@@ -51,15 +51,36 @@ const dummyPosts = [
   }
 ];
 
-mongoose.connect(MONGO_URI)
-  .then(async () => {
-    console.log('MongoDB Connected for Seeding');
-    // We intentionally don't wipe the DB so your previous data is intact!
-    await Post.insertMany(dummyPosts);
-    console.log('Inserted dummy feedback across all categories successfully!');
-    process.exit();
-  })
-  .catch(err => {
-    console.log('Error:', err);
-    process.exit(1);
-  });
+async function seedPosts() {
+  const existingPosts = await Post.countDocuments();
+
+  if (existingPosts > 0) {
+    console.log(`Skipping feedback seed because ${existingPosts} posts already exist.`);
+    return { inserted: 0, skipped: true };
+  }
+
+  await Post.insertMany(dummyPosts);
+  console.log('Inserted dummy feedback across all categories successfully!');
+  return { inserted: dummyPosts.length, skipped: false };
+}
+
+if (require.main === module) {
+  mongoose.connect(MONGO_URI)
+    .then(async () => {
+      console.log('MongoDB Connected for Seeding');
+      await seedPosts();
+      await mongoose.disconnect();
+      process.exit();
+    })
+    .catch(async err => {
+      console.log('Error:', err);
+      try {
+        await mongoose.disconnect();
+      } catch (disconnectError) {
+        console.log('Disconnect Error:', disconnectError);
+      }
+      process.exit(1);
+    });
+}
+
+module.exports = { seedPosts };

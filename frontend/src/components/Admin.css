@@ -1,4 +1,5 @@
-.admin-container {
+.admin-container,
+.admin-dashboard {
   padding: 40px;
   max-width: 1000px;
   margin: 0 auto;
@@ -17,9 +18,10 @@
   margin-bottom: 32px;
 }
 
-.stats-grid {
+.stats-grid,
+.admin-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
   margin-bottom: 40px;
 }
@@ -32,7 +34,8 @@
   box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
 
-.stat-card h3 {
+.stat-card h3,
+.stat-card h4 {
   font-size: 14px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -117,4 +120,24 @@
   text-align: center;
   color: var(--text-muted);
   padding: 32px !important;
+}
+
+@media (max-width: 900px) {
+  .stats-grid,
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-container,
+  .admin-dashboard {
+    padding: 24px 16px;
+  }
+
+  .stats-grid,
+  .admin-stats {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
