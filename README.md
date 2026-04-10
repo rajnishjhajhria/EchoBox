@@ -1,4 +1,4 @@
-# EchoBox Frontend
+# EchoBox
 
 EchoBox is a comprehensive feedback and archiving platform, redesigned as a fully functional, persistent MERN (MongoDB, Express, React, Node.js) stack application. This repository contains the Frontend React application built with Vite.
 
