@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
+const toPublicUser = (user) => ({
+  _id: user._id,
+  username: user.username,
+  email: user.email,
+  isAdmin: user.isAdmin
+});
+
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -10,7 +17,7 @@ router.post('/register', async (req, res) => {
     
     const newUser = new User({ username, email, password });
     await newUser.save();
-    res.json(newUser);
+    res.json(toPublicUser(newUser));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -21,7 +28,7 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username, password });
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
-    res.json(user);
+    res.json(toPublicUser(user));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

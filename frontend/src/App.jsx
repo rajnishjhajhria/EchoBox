@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from './components/Sidebar';
@@ -9,11 +9,22 @@ import Auth from './components/Auth';
 import Admin from './components/Admin';
 
 const API_URL = 'http://localhost:5000/api';
+const AUTH_STORAGE_KEY = 'echobox-current-user';
+
+const getStoredUser = () => {
+  try {
+    const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
+    return storedUser ? JSON.parse(storedUser) : null;
+  } catch {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
+};
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]); // Only retrieved conceptually here if we built an admin users fetch
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(getStoredUser);
   
   const [selectedCategory, setSelectedCategory] = useState("All Posts");
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,28 +34,36 @@ function App() {
   
   const isAuthPage = location.pathname === '/auth';
 
-  useEffect(() => {
-    fetchPosts();
-    fetchUsers();
-  }, []);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const res = await axios.get(`${API_URL}/posts`);
       setPosts(res.data);
     } catch (err) {
       console.error("Failed to fetch posts", err);
     }
-  };
+  }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${API_URL}/auth/users`);
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users", err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchPosts();
+    fetchUsers();
+  }, [fetchPosts, fetchUsers]);
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  }, [currentUser]);
 
   const handleRegister = async (username, password, email) => {
     try {

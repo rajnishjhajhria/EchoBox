@@ -1,58 +1,129 @@
 # EchoBox
 
-EchoBox is a comprehensive feedback and archiving platform, redesigned as a fully functional, persistent MERN (MongoDB, Express, React, Node.js) stack application. This repository contains the Frontend React application built with Vite.
+EchoBox is a full-stack campus feedback platform built with MongoDB, Express, React, and Node.js. Users can register, share feedback across categories, vote, report posts, comment on discussions, and access an admin dashboard for moderation and platform insights.
 
 ## Features
 
-- **Modern Architecture**: Developed using React and Vite for super-fast development cycles and optimized builds.
-- **Dynamic Feedback Feed**: A real-time, dynamic interface that displays posts such as Student Life, Teacher, Event, and Facility feedback.
-- **Real-Time Interactions**: Support for adding comments, upvotes, downvotes, and direct interaction with posts.
-- **Responsive Aesthetics**: Adheres to modern web design standards, showcasing vibrant aesthetics, micro-animations, and smooth UI/UX flows.
+- Anonymous-style campus feedback posts across categories like `Student Life`, `Teacher`, `Event`, and `Facility`
+- User registration and login
+- Upvotes, downvotes, comments, and reporting
+- Admin dashboard with total users, total feedback, most active category, and system notifications
+- Automatic backend seeding for starter feedback data and a default admin user
 
-## Getting Started
+## Project Structure
 
-### Prerequisites
-- Node.js (v16.x or newer)
-- npm or yarn
+```text
+EchoBox/
+|-- backend/
+|   |-- models/
+|   |-- routes/
+|   |-- seed.js
+|   |-- seedAdmin.js
+|   `-- server.js
+|-- frontend/
+|   |-- src/
+|   `-- package.json
+`-- README.md
+```
 
-### Installation
+## Prerequisites
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
+- Node.js 16 or newer
+- npm
+- MongoDB 
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Setup
 
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### 1. Install backend dependencies
 
-4. Alternatively, you can build for production:
-   ```bash
-   npm run build
-   ```
+```bash
+cd backend
+npm install
+```
 
-### Backend Setup
+### 2. Install frontend dependencies
 
-To run the full stack locally, make sure to also run the `backend` server:
-1. Navigate to `../backend`.
-2. Install backend dependencies `npm install`.
-3. Make sure MongoDB is running.
-4. Start the backend DEV server:
-   ```bash
-   npm run dev
-   ```
-*(Or use `node server.js` to run statically.)*
+```bash
+cd ../frontend
+npm install
+```
 
-within the backend directory.
+## Running Locally
+
+### Start the backend
+
+From the `backend` folder:
+
+```bash
+node server.js
+```
+
+When the backend starts, it will:
+
+- connect to MongoDB
+- create the default admin user if it does not already exist
+- insert starter feedback posts only if the posts collection is empty
+
+Default seeded admin credentials:
+
+- Username: `admin`
+- Password: `password`
+
+### Start the frontend
+
+From the `frontend` folder:
+
+```bash
+npm run dev
+```
+
+## Manual Seeding
+
+If you ever want to run the seed files directly from the `backend` folder:
+
+```bash
+node seed.js
+node seedAdmin.js
+```
+
+These scripts are safe to rerun:
+
+- `seed.js` skips inserting posts if posts already exist
+- `seedAdmin.js` skips creating the admin user if it already exists
+
+## Available Scripts
+
+### Frontend
+
+```bash
+npm run dev
+npm run build
+npm run preview
+```
+
+### Backend
+
+```bash
+node server.js
+node seed.js
+node seedAdmin.js
+```
+
+## Admin Panel Notes
+
+- The `Total Users` card is populated from backend user data
+- The `Total Feedback` card is based on stored posts
+- `Most Active Category` is calculated from the current posts list
+- System notifications are fetched from the backend notifications endpoint
 
 ## Tech Stack
-- **React.js**
-- **Vite**
-- **Vanilla CSS**
-- **Axios** (for API communication)
+
+- React
+- Vite
+- React Router
+- Axios
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- Vanilla CSS
